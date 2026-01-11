@@ -1,12 +1,5 @@
-from services.ToDoService import ToDoService
+from fastapi import FastAPI
+from api.todo_router import router
 
-c = ToDoService()
-
-
-
-
-
-c.complete(1)
-
-print(c.listAll())
-
+app = FastAPI(title="Todo API")
+app.include_router(router)
