@@ -6,9 +6,9 @@ class ToDoService:
         self.repo = ToDoRepo()
 
 
-    def add(self, task):
+    def add(self, task:str, user_id:int):
 
-        todo = ToDoList(task)
+        todo = ToDoList(task, False, user_id)
         self.repo.addTaskRepo(todo)
         return todo
 

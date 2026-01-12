@@ -12,8 +12,8 @@ class ToDoRepo:
         c = conn.cursor()
 
         c.execute(
-            "INSERT INTO tasks (task) VALUES (?)",
-            (task.task_name,)
+            "INSERT INTO tasks (task, user_id) VALUES (?, ?)",
+            (task.task_name, task.user_id,)
         )
 
         conn.commit()
