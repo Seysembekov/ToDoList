@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from models.dependencies import get_current_user
 from services.ToDoService import ToDoService
 
@@ -7,15 +7,12 @@ service = ToDoService()
 
 @router.post("/")
 def add_task(task: str, current_user = Depends(get_current_user)):
-    todo = service.add(task=task, user_id=current_user.user_id)
-    return {
-        "task": todo.task_name,
-        "complete": todo.complete
-    }
+    todo = service.add(task, current_user.user_id)
+    return {"task": todo.task_name, "complete": todo.complete}
 
 @router.get("/")
 def list_tasks(current_user = Depends(get_current_user)):
-    tasks = service.listAll(current_user.user_id)
+    tasks = service.list_all(current_user.user_id)
     return [
         {"id": t[0], "task": t[1], "complete": bool(t[2])}
         for t in tasks

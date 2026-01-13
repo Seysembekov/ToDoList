@@ -1,57 +1,47 @@
-from models.users import Users
 from db.db import get_connection
+from models.users import Users
 
 class UserRepo:
-    def __init__(self):
-        self.model = Users
 
-    def createAcc(self, user: Users):
+    def create(self, user: Users):
         conn = get_connection()
         c = conn.cursor()
-
         c.execute(
-            "INSERT INTO users(username, password_hash) VALUES(?, ?)",
+            "INSERT INTO users(username, password_hash) VALUES (?, ?)",
             (user.username, user.password_hash)
         )
-
         conn.commit()
         conn.close()
 
-    def getByName(self, username: str):
+    def get_by_username(self, username: str):
         conn = get_connection()
         c = conn.cursor()
-
         c.execute(
             "SELECT user_id, username, password_hash FROM users WHERE username = ?",
-            (username,)  # ← ВАЖНО
+            (username,)
         )
-
-        a = c.fetchone()
+        row = c.fetchone()
         conn.close()
-        return a
+        return row
 
-    def getById(self, user_id: int):
+    def get_by_id(self, user_id: int):
         conn = get_connection()
         c = conn.cursor()
-
         c.execute(
             "SELECT user_id, username, password_hash FROM users WHERE user_id = ?",
             (user_id,)
         )
-
-        a = c.fetchone()
+        row = c.fetchone()
         conn.close()
-        return a
+        return row
 
-    def existsByUsername(self, username: str) -> bool:
+    def exists_by_username(self, username: str) -> bool:
         conn = get_connection()
         c = conn.cursor()
-
         c.execute(
             "SELECT 1 FROM users WHERE username = ? LIMIT 1",
             (username,)
         )
-
         exists = c.fetchone() is not None
         conn.close()
         return exists

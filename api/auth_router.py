@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from services.userService import UserService
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -13,9 +14,15 @@ def register(username: str, password: str):
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/login")
-def login(username: str, password: str):
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
     try:
-        token = service.login(username, password)
-        return {"access_token": token, "token_type": "bearer"}
+        token = service.login(
+            form_data.username,
+            form_data.password
+        )
+        return {
+            "access_token": token,
+            "token_type": "bearer"
+        }
     except ValueError:
         raise HTTPException(status_code=401, detail="invalid credentials")

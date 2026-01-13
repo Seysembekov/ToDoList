@@ -29,6 +29,7 @@ CREATE TABLE tasks(
     user_id INTEGER NOT NULL DEFAULT 1, FOREIGN KEY (user_id) REFERENCES users(user_id)
 );""")
 
+# c.execute('ALTER TABLE users RENAME to users_old')
 
 a.close()
 

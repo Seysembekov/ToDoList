@@ -2,17 +2,22 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from models.config import SECRET_KEY, ALGORITHM
-from repositories import user_repo
 from repositories.user_repo import UserRepo
 from models.users import Users
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    user_id = payload.get("user_id")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-    row = user_repo.getById(user_id)
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("user_id")
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    repo = UserRepo()
+    row = repo.get_by_id(user_id)
     if not row:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(status_code=401, detail="user not found")
 
     return Users(
         user_id=row[0],
